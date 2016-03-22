@@ -1,0 +1,49 @@
+1. // a method that returns the sum of two integers
+
+START
+
+GET integer1 = first prompted integer
+GET integer2 = second prompted integer
+
+PRINT integer1 + integer2
+
+End
+
+// 
+
+2. // a method that takes and array of strings, and returns a string that is all those strings concatenated together
+
+START
+
+# given a collection of STRINGS called "strings"
+
+SET strings_concat = " "
+
+WHILE length of "strings" > 0
+	push "string" to "string_concat"
+
+PRINT strings_concat
+
+End
+
+//
+
+3. // a method that takes an array of integers, and returns a new array with every other element
+
+START
+
+# given a collection of INTEGERS called "integers"
+
+SET every_other_int = nil
+
+WHILE length of collection "integers" > 0
+	IF integer[i] % 2 = 0
+		push "integer" to "every_other_int"
+	ELSE
+		next integer
+
+PRINT every_other_int
+
+End
+
+//
