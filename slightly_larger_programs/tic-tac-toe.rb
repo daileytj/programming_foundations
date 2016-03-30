@@ -13,6 +13,11 @@ def prompt(msg)
   puts "=> #{msg}"
 end
 
+def joiner(arr, delimiter = ', ', final_separator = 'or')
+	arr[-1] = "#{final_separator} #{arr.last}" if arr.size > 1
+	arr.join(delimiter)
+end
+
 # rubocop:disable Metrics/AbcSize
 def display_board(brd)
   system 'clear'
@@ -46,7 +51,7 @@ end
 def player_places_piece!(brd)
   square = ''
   loop do
-    prompt "Choose a square (#{empty_squares(brd).join(', ')}):"
+    prompt "Choose a square (#{joiner(empty_squares(brd))}):"
     square = gets.chomp.to_i
     break if empty_squares(brd).include?(square)
     prompt "Sorry, that's not avalid choice."
@@ -80,23 +85,42 @@ def detect_winner(brd)
 end
 
 loop do
-  board = initialize_board
-  display_board(board)
-
+  player_score = 0
+  computer_score = 0
   loop do
-    display_board(board)
-    player_places_piece!(board)
-    break if someone_won?(board) || board_full?(board)
-    computer_places_piece!(board)
-    break if someone_won?(board) || board_full?(board)
-  end
+	  board = initialize_board
+	  display_board(board)
 
-  display_board(board)
+	  loop do
+	    display_board(board)
+	    player_places_piece!(board)
+	    break if someone_won?(board) || board_full?(board)
+	    computer_places_piece!(board)
+	    break if someone_won?(board) || board_full?(board)
+	  end
 
-  if someone_won?(board)
-    prompt "#{detect_winner(board)} won!"
-  else
-    prompt "It's a tie!"
+	  display_board(board)
+
+	  if ("#{detect_winner(board)}") == 'Player'
+	  	player_score  = player_score + 1
+	  elsif ("#{detect_winner(board)}") == 'Computer'
+	  	computer_score = computer_score + 1
+	  end
+
+	  if player_score < 5 && computer_score < 5
+	  prompt "Current Score is..."
+      prompt "#{player_score} to #{computer_score}"
+      prompt "Prepare for the next game in the series..."
+      sleep(2)
+      end
+
+	  if player_score == 5
+      prompt("Player Won Five Games! ... WAHOO!!")
+      break
+      elsif computer_score == 5
+      prompt("Computer Won Five Games! ... OH NO!")
+      break
+    end
   end
 
   prompt "Play again? ( y or n )"
