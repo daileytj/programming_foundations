@@ -14,8 +14,8 @@ def prompt(msg)
 end
 
 def joiner(arr, delimiter = ', ', final_separator = 'or')
-	arr[-1] = "#{final_separator} #{arr.last}" if arr.size > 1
-	arr.join(delimiter)
+  arr[-1] = "#{final_separator} #{arr.last}" if arr.size > 1
+  arr.join(delimiter)
 end
 
 # rubocop:disable Metrics/AbcSize
@@ -62,33 +62,29 @@ end
 
 def find_at_risk_square(line, brd, marker)
   if brd.values_at(*line).count(marker) == 2
-  	 brd.select {|k, v| line.include?(k) && v == INITIAL_MARKER}.keys.first
+    brd.select { |k, v| line.include?(k) && v == INITIAL_MARKER }.keys.first
   else
-  	nil
+    nil
   end
 end
 
 def computer_places_piece!(brd)
   square = nil
-  
   WINNING_LINES.each do |line|
-      square = find_at_risk_square(line, brd, COMPUTER_MARKER)
-      break if square
+    square = find_at_risk_square(line, brd, COMPUTER_MARKER)
+    break if square
   end
-
   if !square
     WINNING_LINES.each do |line|
-    square = find_at_risk_square(line,brd, PLAYER_MARKER)
-    break if square
-    end 
+      square = find_at_risk_square(line, brd, PLAYER_MARKER)
+      break if square
+    end
   end
-
   if !square && brd[5] == ' '
     square = 5
   elsif !square
     square = empty_squares(brd).sample
   end
-  
   brd[square] = COMPUTER_MARKER
 end
 
@@ -111,41 +107,57 @@ def detect_winner(brd)
   nil
 end
 
+def alternate_player(current_player)
+  if current_player == 'Player'
+    return 'Computer'
+  else
+    return 'Player'
+  end
+end
+
+def place_piece!(board, current_player)
+  if current_player == 'Player'
+    player_places_piece!(board)
+  else
+    computer_places_piece!(board)
+  end
+end
+
 loop do
   player_score = 0
   computer_score = 0
+  current_player = 'Player'
   loop do
-	  board = initialize_board
-	  display_board(board)
+    board = initialize_board
+    display_board(board)
 
-	  loop do
-	    display_board(board)
-	    player_places_piece!(board)
-	    break if someone_won?(board) || board_full?(board)
-	    computer_places_piece!(board)
-	    break if someone_won?(board) || board_full?(board)
-	  end
+    loop do
+      display_board(board)
+      place_piece!(board, current_player)
+      current_player = alternate_player(current_player)
+      break if someone_won?(board) || board_full?(board)
+    end
 
-	  display_board(board)
+    display_board(board)
 
-	  if ("#{detect_winner(board)}") == 'Player'
-	  	player_score  = player_score + 1
-	  elsif ("#{detect_winner(board)}") == 'Computer'
-	  	computer_score = computer_score + 1
-	  end
+    if detect_winner(board).to_s == 'Player'
+      player_score += 1
+    elsif detect_winner(board).to_s == 'Computer'
+      computer_score += 1
+    end
 
-	  if player_score < 5 && computer_score < 5
-	  prompt "Current Score is..."
+    if player_score < 5 && computer_score < 5
+      prompt "Current Score is..."
       prompt "#{player_score} to #{computer_score}"
       prompt "Prepare for the next game in the series..."
       sleep(2)
-      end
+    end
 
-	  if player_score == 5
-      prompt("Player Won Five Games! ... WAHOO!!")
+    if player_score == 5
+      prompt("Hooray! Player Won Five Games!")
       break
-      elsif computer_score == 5
-      prompt("Computer Won Five Games! ... OH NO!")
+    elsif computer_score == 5
+      prompt("Awe Boo! Computer Won Five Games!")
       break
     end
   end
