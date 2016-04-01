@@ -70,6 +70,15 @@ def display_result(dealer_cards, player_cards)
   end
 end
 
+def grand_output (dealer_cards, player_cards)
+  puts "==============="
+  prompt "Dealer has #{dealer_cards}, for a total of: #{total(dealer_cards)}"
+  prompt "Player has #{player_cards}, for a total of: #{total(player_cards)}"
+  puts "==============="
+
+  display_result(dealer_cards, player_cards)
+end
+
 def play_again?
   puts "---------------"
   prompt "Do you want to play again?"
@@ -121,7 +130,7 @@ loop do
   end
 
   if busted?(player_cards)
-    display_result(dealer_cards, player_cards)
+    grand_output(dealer_cards,player_cards)
     play_again? ? next : break
   else
     prompt "You stayed at #{total(player_cards)}"
@@ -137,22 +146,34 @@ loop do
     prompt "Dealers cards are now #{dealer_cards}"
   end
 
+  dealer_total = total(dealer_cards)
   if busted?(dealer_cards)
-    prompt "Dealer total is now: #{total(dealer_cards)}"
-    display_result(dealer_cards, player_cards)
+    prompt "Dealer total is now: #{dealer_total}"
+    grand_output(dealer_cards,player_cards)
     play_again? ? next : break
   else
-    prompt "Dealer stays at #{total(dealer_cards)}"
+    prompt "Dealer stays at #{dealer_total}"
   end
 
-  puts "==============="
-  prompt "Dealer has #{dealer_cards}, for a total of: #{total(dealer_cards)}"
-  prompt "Player has #{player_cards}, for a total of: #{total(player_cards)}"
-  puts "==============="
-
-  display_result(dealer_cards, player_cards)
+  grand_output(dealer_cards, player_cards)
 
   break unless play_again?
 end
 
 prompt "Thank you for playing Twenty-One! Good Bye!"
+
+# ====================
+#        BONUS
+# ====================
+
+# 1)
+# We cant replace all calls to total with a local variable because the variable changes throughout
+# the programand we need to recalculate the total everytime it is changed.
+
+# 2)
+# The last call to play again is different from the previous two because the previous two have a if next else break clause
+# where as if the player does not want to play again we break and if they do the loop restarts.
+
+# 3)
+# We can extract the method and get a grand output in each place where the round ends.
+# We just have to remember to add two parameters calling in the players cards and the dealers cards.
